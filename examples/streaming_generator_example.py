@@ -1,18 +1,13 @@
 import os
 
-from langchain.chat_models import ChatOpenAI
+from dotenv import load_dotenv
+from langchain.chat_models import ChatLiteLLM
 
 from salesgpt.agents import SalesGPT
 
-with open(".env", "r") as f:
-    env_file = f.readlines()
-envs_dict = {
-    key.strip("'"): value.strip("\n")
-    for key, value in [(i.split("=")) for i in env_file]
-}
-os.environ["OPENAI_API_KEY"] = envs_dict["OPENAI_API_KEY"]
+load_dotenv()
 
-llm = ChatOpenAI(temperature=0.9)
+llm = ChatLiteLLM(temperature=0.9, model_name="gpt-3.5-turbo-0613")
 
 sales_agent = SalesGPT.from_llm(
     llm,
@@ -33,9 +28,7 @@ sales_agent = SalesGPT.from_llm(
 sales_agent.seed_agent()
 
 # get generator of the LLM output
-generator = sales_agent.step(
-    return_streaming_generator=True, model_name="gpt-3.5-turbo-0613"
-)
+generator = sales_agent.step(stream=True)
 
 # operate on streaming LLM output in near-real time
 # for instance, do something after each full sentence is generated

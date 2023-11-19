@@ -1,19 +1,15 @@
 import argparse
 import json
-import os
 
-from langchain.chat_models import ChatOpenAI
+from dotenv import load_dotenv
+from langchain.chat_models import ChatLiteLLM
 
 from salesgpt.agents import SalesGPT
 
-from dotenv import load_dotenv
+load_dotenv()  # loads .env file
 
-load_dotenv()
 
 if __name__ == "__main__":
-    # import your OpenAI key (put in your .env file)
-    os.environ["OPENAI_API_KEY"]
-
     # Initialize argparse
     parser = argparse.ArgumentParser(description="Description of your program")
 
@@ -21,7 +17,8 @@ if __name__ == "__main__":
     parser.add_argument(
         "--config", type=str, help="Path to agent config file", default=""
     )
-    parser.add_argument("--verbose", type=bool, help="Verbosity", default=False)
+    parser.add_argument("--verbose", type=bool, help="Verbosity",
+                        default=False)
     parser.add_argument(
         "--max_num_turns",
         type=int,
@@ -37,11 +34,12 @@ if __name__ == "__main__":
     verbose = args.verbose
     max_num_turns = args.max_num_turns
 
-    llm = ChatOpenAI(temperature=0.2)
+    llm = ChatLiteLLM(temperature=0.2, model_name="gpt-3.5-turbo-instruct")
 
     if config_path == "":
         print("No agent config specified, using a standard config")
-        USE_TOOLS = "True"  # keep boolean as string to be consistent with JSON configs.
+        # keep boolean as string to be consistent with JSON configs.
+        USE_TOOLS = "True"
         if USE_TOOLS == "True":
             sales_agent = SalesGPT.from_llm(
                 llm,

@@ -20,6 +20,9 @@ Please send an email to [the repo author](mailto:filipmichalsky@gmail.com).
 ## :red_circle: Latest News
 
 - Sales Agent can now take advantage of **tools**, such as look up products in a product catalog!
+- SalesGPT is now compatible with [LiteLLM](https://github.com/BerriAI/litellm), choose *any closed/open-sourced LLM* to work with SalesGPT! Thanks to LiteLLM maintainers for this contribution!
+- SalesGPT works with synchronous and asynchronous completion, as well as synchronous/asynchronous streaming. Scale your Sales Agents up!
+
 
 ### Demo: Outbound Prospecting from Crusty AI: A New Way to Sell? 🤔
 
@@ -37,11 +40,13 @@ Please send an email to [the repo author](mailto:filipmichalsky@gmail.com).
 ```python
 import os
 from salesgpt.agents import SalesGPT
-from langchain.chat_models import ChatOpenAI
+from langchain.chat_models import ChatLiteLLM
 
-os.environ['OPENAI_API_KEY'] = 'sk-xxx' # fill me in
+from dotenv import load_dotenv
+load_dotenv() # make sure you have .env file with your API keys, eg., OPENAI_API_KEY=sk-xxx
 
-llm = ChatOpenAI(temperature=0.4)
+# select your model - we support 50+ LLMs via LiteLLM https://docs.litellm.ai/docs/providers
+llm = ChatLiteLLM(temperature=0.4, model_name="gpt-3.5-turbo") 
                             
 sales_agent = SalesGPT.from_llm(llm, use_tools=True, verbose=False,
                             product_catalog = "examples/sample_product_catalog.txt",
@@ -128,11 +133,11 @@ As such, this agent can have a natural sales conversation with a prospect and be
 
 ## Installation
 
-Make sure your have a python 3.10+ and run:
+Make sure your have a **python 3.10+** and run:
 
 `pip install -r requirements.txt`
 
-Create `.env` file and put your Open AI Key there by specifying a line: 
+Create `.env` file and put your API keys there by specifying a line, for instance: 
 
 `OPENAI_API_KEY=sk-xxx`
 
@@ -154,6 +159,12 @@ We have a SalesGPT deployment demo via FastAPI.
 
 Please refer to [README-api.md](https://github.com/filip-michalsky/SalesGPT/blob/main/README-api.md) for instructions!
 
+## Test your set up
+
+1. `pip install -r requirements.txt`
+2. `pytest`
+
+All tests should pass.
 
 ## Contact Us
 
@@ -165,14 +176,15 @@ Follow me at [@FilipMichalsky](https://twitter.com/FilipMichalsky)
 ## SalesGPT Roadmap
 
 - [high priority] Sell your soul.
-- [high priority] Add support for multiple LLMs backends [PR in progress here](https://github.com/filip-michalsky/SalesGPT/pull/36)
 - [high priority] Improve reliability of the parser [issue here](https://github.com/filip-michalsky/SalesGPT/issues/26) and [here](https://github.com/filip-michalsky/SalesGPT/issues/25)
 - Add example implementation of OpenAI functions agent[issue here](https://github.com/filip-michalsky/SalesGPT/issues/17)
 - Add support for multiple tools [issue here](https://github.com/filip-michalsky/SalesGPT/issues/10)
-- Add an agent controller for whne stages need to be traversed linearly without skips [issue here](https://github.com/filip-michalsky/SalesGPT/issues/19)
-- Add `tool_getter` to choose a tool based on vector distance to the taks needed to be done
+- Add an agent controller for when stages need to be traversed linearly without skips [issue here](https://github.com/filip-michalsky/SalesGPT/issues/19)
+- Add `tool_getter` to choose a tool based on vector distance to the tasks needed to be done
 - What tools should the agent have? (e.g., the ability to search the internet)
 - Add the ability of Sales Agent to interact with AI plugins on your website (.well-known/ai-plugin.json)
+
+~~-- [high priority] Add support for multiple LLMs backends [PR in progress here](https://github.com/filip-michalsky/SalesGPT/pull/36)~~-
 ~~-
  Add the ability to stop generation when user interupts the agent~~
 
